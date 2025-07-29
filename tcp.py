@@ -1,32 +1,4 @@
-import asyncio
-from tcputils import *
-
-
-class Servidor:
-    def __init__(self, rede, porta):
-        self.rede = rede
-        self.porta = porta
-        self.conexoes = {}
-        self.callback = None
-        self.rede.registrar_recebedor(self._rdt_rcv)
-
-    def registrar_monitor_de_conexoes_aceitas(self, callback):
-        """
-        Usado pela camada de aplicação para registrar uma função para ser chamada
-        sempre que uma nova conexão for aceita
-        """
-        self.callback = callback
-
-    def _rdt_rcv(self, src_addr, dst_addr, segment):
-        src_port, dst_port, seq_no, ack_no, \
-            flags, window_size, checksum, urg_ptr = read_header(segment)
-
-        if dst_port != self.porta:
-            # Ignora segmentos que não são destinados à porta do nosso servidor
-            return
-        if not self.rede.ignore_checksum and calc_checksum(segment, src_addr, dst_addr) != 0:
-            print('descartando segmento com checksum incorreto')
-            return
+https://github.com/thotypous/redes-p2
 
         payload = segment[4*(flags>>12):]
         id_conexao = (src_addr, src_port, dst_addr, dst_port)
